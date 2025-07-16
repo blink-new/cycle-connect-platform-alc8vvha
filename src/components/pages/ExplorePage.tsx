@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RideMap } from '@/components/ui/ride-map'
-import { Search, MapPin, Calendar, Users, List, Map, Clock, Zap } from 'lucide-react'
+import { Search, MapPin, Calendar, Users, List, Map, Clock, Zap, AlertCircle } from 'lucide-react'
 import { blink } from '@/blink/client'
+import { mockRides } from '@/data/mockRides'
 import type { Ride, User } from '@/types/ride'
 
 interface ExplorePageProps {
@@ -21,6 +22,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [difficultyFilter, setDifficultyFilter] = useState<string>('all')
   const [user, setUser] = useState<User | null>(null)
+  const [usingMockData, setUsingMockData] = useState(false)
 
   useEffect(() => {
     const unsubscribe = blink.auth.onAuthStateChanged((state) => {
@@ -40,8 +42,16 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
       })
       setRides(ridesData)
       setFilteredRides(ridesData)
+      setUsingMockData(false)
     } catch (error) {
       console.error('Error loading rides:', error)
+      // Handle database not found error gracefully
+      if (error.message?.includes('Database for project') && error.message?.includes('not found')) {
+        console.log('Database not yet initialized - using mock data for demonstration')
+        setRides(mockRides)
+        setFilteredRides(mockRides)
+        setUsingMockData(true)
+      }
     } finally {
       setLoading(false)
     }
@@ -66,7 +76,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
   }, [rides, searchQuery, difficultyFilter])
 
   const joinRide = async (rideId: string) => {
-    if (!user) return
+    if (!user || usingMockData) return
 
     try {
       const ride = rides.find(r => r.id === rideId)
@@ -91,7 +101,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
   }
 
   const leaveRide = async (rideId: string) => {
-    if (!user) return
+    if (!user || usingMockData) return
 
     try {
       const ride = rides.find(r => r.id === rideId)
@@ -152,6 +162,22 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Explore Rides</h1>
           <p className="text-gray-600">Discover and join cycling adventures in your area</p>
         </div>
+
+        {/* Mock Data Notice */}
+        {usingMockData && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h3 className="text-sm font-medium text-amber-800 mb-1">Demo Mode</h3>
+                <p className="text-sm text-amber-700">
+                  Database is currently being set up. Showing sample rides for demonstration. 
+                  Creating new rides is temporarily disabled.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Filters and Search */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -273,18 +299,19 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                               variant="outline"
                               size="sm"
                               onClick={() => leaveRide(ride.id)}
+                              disabled={usingMockData}
                               className="flex-1"
                             >
-                              Leave Ride
+                              {usingMockData ? 'Demo Mode' : 'Leave Ride'}
                             </Button>
                           ) : (
                             <Button
                               size="sm"
                               onClick={() => joinRide(ride.id)}
-                              disabled={isFull}
+                              disabled={isFull || usingMockData}
                               className="flex-1"
                             >
-                              {isFull ? 'Full' : 'Join Ride'}
+                              {usingMockData ? 'Demo Mode' : isFull ? 'Full' : 'Join Ride'}
                             </Button>
                           )}
                         </div>

@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Calendar, MapPin, Users, Clock, Zap } from 'lucide-react'
+import { Calendar, MapPin, Users, Clock, Zap, AlertCircle } from 'lucide-react'
 import { blink } from '@/blink/client'
 import type { User } from '@/types/ride'
 
@@ -16,6 +16,7 @@ interface CreateRidePageProps {
 export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(false)
+  const [databaseUnavailable, setDatabaseUnavailable] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -91,6 +92,14 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
       onNavigate('explore')
     } catch (error) {
       console.error('Error creating ride:', error)
+      // Handle database not found error
+      if (error.message?.includes('Database for project') && error.message?.includes('not found')) {
+        // Don't show alert, we'll show a banner instead
+        console.log('Database not available - ride creation disabled')
+        setDatabaseUnavailable(true)
+      } else {
+        alert('Failed to create ride. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
@@ -114,6 +123,22 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Create a New Ride</h1>
           <p className="text-gray-600">Share your cycling adventure with the community</p>
         </div>
+
+        {/* Database Unavailable Notice */}
+        {databaseUnavailable && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h3 className="text-sm font-medium text-red-800 mb-1">Database Unavailable</h3>
+                <p className="text-sm text-red-700">
+                  Unable to create rides at the moment. The database is being set up. 
+                  Please try again later or contact support if this persists.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <Card>
           <CardHeader>
