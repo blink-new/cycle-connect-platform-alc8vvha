@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { RideMap } from '@/components/ui/ride-map'
 import { Search, MapPin, Calendar, Users, List, Map, Clock, Zap } from 'lucide-react'
 import { blink } from '@/blink/client'
 import type { Ride, User } from '@/types/ride'
@@ -301,15 +302,21 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Map View Coming Soon</h3>
-            <p className="text-gray-600 mb-4">
-              Interactive map view will be available in the next update
-            </p>
-            <Button variant="outline" onClick={() => setViewMode('list')}>
-              Switch to List View
-            </Button>
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            {filteredRides.length === 0 ? (
+              <div className="text-center py-12">
+                <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500 text-lg mb-4">No rides to display on map</p>
+                <Button onClick={() => onNavigate('create')}>Create the first ride</Button>
+              </div>
+            ) : (
+              <RideMap 
+                rides={filteredRides} 
+                user={user} 
+                onJoinRide={joinRide}
+                onLeaveRide={leaveRide}
+              />
+            )}
           </div>
         )}
       </div>
