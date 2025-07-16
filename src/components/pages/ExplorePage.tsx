@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { RideMap } from '@/components/ui/ride-map'
-import { Search, MapPin, Calendar, Users, List, Map, Clock, Zap, AlertCircle } from 'lucide-react'
+import { Search, MapPin, Calendar, Users, List, Map, Clock, Zap, AlertCircle, Bike } from 'lucide-react'
 import { blink } from '@/blink/client'
 import { mockRides } from '@/data/mockRides'
 import type { Ride, User } from '@/types/ride'
@@ -155,12 +155,12 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Explore Rides</h1>
-          <p className="text-gray-600">Discover and join cycling adventures in your area</p>
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Explore Rides</h1>
+          <p className="text-lg text-gray-600">Discover and join cycling adventures in your area</p>
         </div>
 
         {/* Mock Data Notice */}
@@ -180,7 +180,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
         )}
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border-0 p-6 mb-6 animate-slide-up">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
               <div className="relative flex-1">
@@ -189,11 +189,11 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                   placeholder="Search rides, locations..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                 />
               </div>
               <Select value={difficultyFilter} onValueChange={setDifficultyFilter}>
-                <SelectTrigger className="w-full sm:w-48">
+                <SelectTrigger className="w-full sm:w-48 border-gray-200 focus:border-blue-500 focus:ring-blue-500/20">
                   <SelectValue placeholder="Difficulty" />
                 </SelectTrigger>
                 <SelectContent>
@@ -210,6 +210,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                 variant={viewMode === 'list' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setViewMode('list')}
+                className={viewMode === 'list' ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-300 hover:bg-gray-50'}
               >
                 <List className="h-4 w-4 mr-2" />
                 List
@@ -218,6 +219,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                 variant={viewMode === 'map' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setViewMode('map')}
+                className={viewMode === 'map' ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-300 hover:bg-gray-50'}
               >
                 <Map className="h-4 w-4 mr-2" />
                 Map
@@ -258,36 +260,37 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                 const isFull = ride.currentParticipants >= ride.maxParticipants
 
                 return (
-                  <Card key={ride.id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader>
+                  <Card key={ride.id} className="hover-lift border-0 shadow-lg bg-white/90 backdrop-blur-sm animate-fade-in">
+                    <CardHeader className="pb-4">
                       <div className="flex justify-between items-start">
-                        <CardTitle className="text-lg">{ride.title}</CardTitle>
-                        <Badge className={getDifficultyColor(ride.difficulty)}>
+                        <CardTitle className="text-lg font-bold text-gray-900 leading-tight">{ride.title}</CardTitle>
+                        <Badge className={`${getDifficultyColor(ride.difficulty)} font-medium shadow-sm`}>
                           {getDifficultyIcon(ride.difficulty)}
                           <span className="ml-1">{ride.difficulty}</span>
                         </Badge>
                       </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        {ride.startLocation}
+                      <div className="flex items-center text-sm text-gray-600 mt-2">
+                        <MapPin className="h-4 w-4 mr-1 text-blue-500" />
+                        <span className="truncate">{ride.startLocation}</span>
                       </div>
                     </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{ride.description}</p>
+                    <CardContent className="pt-0">
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{ride.description}</p>
                       
-                      <div className="space-y-2 mb-4">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          {new Date(ride.date).toLocaleDateString()} at {ride.time}
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center text-sm text-gray-700">
+                          <Calendar className="h-4 w-4 mr-3 text-blue-500 flex-shrink-0" />
+                          <span className="font-medium">{new Date(ride.date).toLocaleDateString()} at {ride.time}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Users className="h-4 w-4 mr-2" />
-                          {ride.currentParticipants}/{ride.maxParticipants} participants
+                        <div className="flex items-center text-sm text-gray-700">
+                          <Users className="h-4 w-4 mr-3 text-green-500 flex-shrink-0" />
+                          <span className="font-medium">{ride.currentParticipants}/{ride.maxParticipants} participants</span>
                         </div>
-                        <div className="text-sm text-gray-600">
-                          Distance: {ride.distance}km
+                        <div className="flex items-center text-sm text-gray-700">
+                          <Bike className="h-4 w-4 mr-3 text-purple-500 flex-shrink-0" />
+                          <span className="font-medium">{ride.distance}km distance</span>
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 pl-7">
                           Created by {ride.creatorName}
                         </div>
                       </div>
@@ -300,7 +303,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                               size="sm"
                               onClick={() => leaveRide(ride.id)}
                               disabled={usingMockData}
-                              className="flex-1"
+                              className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-medium"
                             >
                               {usingMockData ? 'Demo Mode' : 'Leave Ride'}
                             </Button>
@@ -309,7 +312,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                               size="sm"
                               onClick={() => joinRide(ride.id)}
                               disabled={isFull || usingMockData}
-                              className="flex-1"
+                              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm"
                             >
                               {usingMockData ? 'Demo Mode' : isFull ? 'Full' : 'Join Ride'}
                             </Button>
@@ -318,7 +321,7 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
                       )}
                       
                       {isCreator && (
-                        <Badge variant="secondary" className="w-full justify-center">
+                        <Badge variant="secondary" className="w-full justify-center py-2 bg-green-100 text-green-800 font-medium">
                           Your Ride
                         </Badge>
                       )}
@@ -329,12 +332,17 @@ export function ExplorePage({ onNavigate }: ExplorePageProps) {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-lg shadow-sm p-4">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border-0 p-4 animate-fade-in">
             {filteredRides.length === 0 ? (
               <div className="text-center py-12">
                 <Map className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500 text-lg mb-4">No rides to display on map</p>
-                <Button onClick={() => onNavigate('create')}>Create the first ride</Button>
+                <Button 
+                  onClick={() => onNavigate('create')}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                >
+                  Create the first ride
+                </Button>
               </div>
             ) : (
               <RideMap 

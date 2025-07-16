@@ -117,11 +117,11 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50/30">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Create a New Ride</h1>
-          <p className="text-gray-600">Share your cycling adventure with the community</p>
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Create a New Ride</h1>
+          <p className="text-lg text-gray-600">Share your cycling adventure with the community</p>
         </div>
 
         {/* Database Unavailable Notice */}
@@ -140,10 +140,10 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
           </div>
         )}
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+        <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm animate-slide-up">
+          <CardHeader className="pb-6">
+            <CardTitle className="flex items-center text-xl font-bold">
+              <Calendar className="h-6 w-6 mr-3 text-blue-600" />
               Ride Details
             </CardTitle>
           </CardHeader>
@@ -158,6 +158,7 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
                     placeholder="e.g., Morning Coffee Ride"
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
+                    className="border-gray-200 focus:border-blue-500 focus:ring-blue-500/20"
                     required
                   />
                 </div>
@@ -282,14 +283,14 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
                   type="button"
                   variant="outline"
                   onClick={() => onNavigate('explore')}
-                  className="flex-1"
+                  className="flex-1 border-gray-300 hover:bg-gray-50 font-medium"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
+                  className="flex-1 gradient-blue-green hover:opacity-90 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   {loading ? 'Creating...' : 'Create Ride'}
                 </Button>
@@ -299,17 +300,35 @@ export function CreateRidePage({ onNavigate }: CreateRidePageProps) {
         </Card>
 
         {/* Tips Card */}
-        <Card className="mt-6">
+        <Card className="mt-6 border-0 shadow-lg bg-blue-50/50 backdrop-blur-sm animate-fade-in">
           <CardHeader>
-            <CardTitle className="text-lg">Tips for Creating Great Rides</CardTitle>
+            <CardTitle className="text-lg font-bold text-blue-900 flex items-center">
+              <Zap className="h-5 w-5 mr-2 text-blue-600" />
+              Tips for Creating Great Rides
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li>• Be specific about the starting location and any landmarks</li>
-              <li>• Include information about rest stops or scenic highlights</li>
-              <li>• Mention if special equipment is needed (lights, repair kit, etc.)</li>
-              <li>• Set realistic participant limits based on your route</li>
-              <li>• Consider weather conditions and have a backup plan</li>
+            <ul className="space-y-3 text-sm text-gray-700">
+              <li className="flex items-start">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                <span>Be specific about the starting location and any landmarks</span>
+              </li>
+              <li className="flex items-start">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                <span>Include information about rest stops or scenic highlights</span>
+              </li>
+              <li className="flex items-start">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                <span>Mention if special equipment is needed (lights, repair kit, etc.)</span>
+              </li>
+              <li className="flex items-start">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                <span>Set realistic participant limits based on your route</span>
+              </li>
+              <li className="flex items-start">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                <span>Consider weather conditions and have a backup plan</span>
+              </li>
             </ul>
           </CardContent>
         </Card>
